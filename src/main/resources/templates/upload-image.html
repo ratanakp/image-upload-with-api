@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/resources/js/jquery.min.js"></script>
+</head>
+<body>
+<form action="/upload/submit" method="post" enctype="multipart/form-data" th:object="${user}">
+
+    ID: <input type="number" placeholder="id" th:field="*{id}"><br>
+
+    Name: <input type="text" placeholder="name" th:field="*{name}"><br>
+
+    Gender: <input type="text" placeholder="gender" th:field="*{gender}"> <br>
+
+    Image: <input name="file" type="file"> <br>
+    Image1: <input name="file1" type="file"> <br>
+
+    <input type="submit" value="Submit">
+
+</form>
+</body>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("input[type='file']").change(function() {
+            var filename = $(this).val();
+            console.log(filename)
+        });
+
+        $('form').on('submit', function (e) {
+             e.preventDefault();
+
+            var form = new FormData();
+            var file = $("input[type='file']")[0].files;
+
+            var user = {
+                id: $("#id").val(),
+                name: $("#name").val(),
+                gender: $("#gender").val()
+
+            };
+
+            console.log(file);
+            console.log(user);
+            form.append("file", file);
+            form.append("user", user);
+
+            var formElement = this;
+            // You can directly create form data from the form element
+            // (Or you could get the files from input element and append them to FormData as we did in vanilla javascript)
+            var formData = new FormData(formElement);
+
+            $.ajax({
+                type: "POST",
+                enctype: 'multipart/form-data',
+                url: "/upload/submit",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                    // process response
+                },
+                error: function (error) {
+                    console.log(error);
+                    // process error
+                }
+            });
+        });
+
+    });
+
+</script>
+</html>
